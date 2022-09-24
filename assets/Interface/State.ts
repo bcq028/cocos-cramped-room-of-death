@@ -2,6 +2,7 @@ import { animation, AnimationClip, AnimationComponent, Sprite, SpriteFrame } fro
 import { ResourceManager } from '../Runtime/ResourceManager'
 import { PlayerStateMachine } from '../Scripts/Player/PlayerStateMachine'
 import { sortSpriteFrame } from '../Scripts/Utils'
+import { StateMachine } from './StateMachine'
 
 /***
  * unit:milisecond
@@ -14,7 +15,7 @@ export const ANIMATION_SPEED = 1 / 8
 export default class State {
   private animationClip: AnimationClip
   constructor(
-    private fsm: PlayerStateMachine,
+    private fsm: StateMachine,
     private spriteFrameDir: string,
     private wrapMode: AnimationClip.WrapMode = AnimationClip.WrapMode.Normal,
     private speed: number = ANIMATION_SPEED,
