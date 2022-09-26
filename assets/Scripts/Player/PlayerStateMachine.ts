@@ -4,6 +4,7 @@ import {ENTITY_STATE_ENUM, FSM_PARAM_TYPE_ENUM, PARAMS_NAME_ENUM } from '../../E
 import { EntityManager } from '../../Interface/EntityManager';
 import State from '../../Interface/State';
 import { getInitParamsNumber, getInitParamsTrigger, StateMachine } from '../../Interface/StateMachine';
+import AttackSubStateMachine from './substateMachine/AttackSubStateMachine';
 import BlockBackSubStateMachine from './substateMachine/BlockBackSubStateMachine';
 import BlockFrontSubStateMachine from './substateMachine/BlockFrontSubStateMachine';
 import BlockFrontSubStateMache from './substateMachine/BlockFrontSubStateMachine';
@@ -12,6 +13,7 @@ import BlockRightSubStateMachine from './substateMachine/BlockRightSubStateMachi
 import BlockTurnLeftSubStateMachine from './substateMachine/BlockTurnLeftSubStateMachine';
 import BlockTurnLeftSubStateMache from './substateMachine/BlockTurnLeftSubStateMachine';
 import BlockTurnRightSubStateMachine from './substateMachine/BlockTurnRightSubStateMachine';
+import DeathSubStateMachine from './substateMachine/DeathSubStateMachine';
 import IdleSubStateMachine from './substateMachine/IdleSubStateMachine';
 import TurnLeftSubStateMachine from './substateMachine/TurnLeftSubStateMachine';
 import TurnRightSubStateMachine from './substateMachine/TurnRightSubStateMachine';
@@ -62,36 +64,26 @@ export class PlayerStateMachine extends StateMachine {
       this.stateMachines.set(PARAMS_NAME_ENUM.BLOCKRIGHT, new BlockRightSubStateMachine(this))
       this.stateMachines.set(PARAMS_NAME_ENUM.BLOCKTURNLEFT, new BlockTurnLeftSubStateMachine(this))
       this.stateMachines.set(PARAMS_NAME_ENUM.BLOCKTURNRIGHT, new BlockTurnRightSubStateMachine(this))
-      // this.stateMachines.set(PARAMS_NAME_ENUM.ATTACK, new AttackSubStateMachine(this))
-      // this.stateMachines.set(PARAMS_NAME_ENUM.DEATH, new DeathSubStateMachine(this))
+      this.stateMachines.set(PARAMS_NAME_ENUM.ATTACK, new AttackSubStateMachine(this))
+      this.stateMachines.set(PARAMS_NAME_ENUM.DEATH, new DeathSubStateMachine(this))
       // this.stateMachines.set(PARAMS_NAME_ENUM.AIRDEATH, new AirDeathSubStateMachine(this))
     }
     initAnimationEvent(){
       //包含turn的动画播放完后回到idle状态
       this.animationComponent.on(Animation.EventType.FINISHED,()=>{
         const name=this.animationComponent.defaultClip.name;
-        const whiteList=['turn','block'];
+        const whiteList=['turn','block','attack'];
         if(whiteList.some(v=>name.includes(v))){
           this.node.getComponent(EntityManager).state=ENTITY_STATE_ENUM.IDLE;
         }
       })
     }
 
-    run(){
-      switch (this.currentState) {
-        case this.stateMachines.get(PARAMS_NAME_ENUM.IDLE):
-        case this.stateMachines.get(PARAMS_NAME_ENUM.ATTACK):
-        case this.stateMachines.get(PARAMS_NAME_ENUM.TURNLEFT):
-        case this.stateMachines.get(PARAMS_NAME_ENUM.TURNRIGHT):
-        case this.stateMachines.get(PARAMS_NAME_ENUM.BLOCKTURNLEFT):
-        case this.stateMachines.get(PARAMS_NAME_ENUM.BLOCKTURNRIGHT):
-        case this.stateMachines.get(PARAMS_NAME_ENUM.BLOCKFRONT):
-        case this.stateMachines.get(PARAMS_NAME_ENUM.BLOCKBACK):
-        case this.stateMachines.get(PARAMS_NAME_ENUM.BLOCKLEFT):
-        case this.stateMachines.get(PARAMS_NAME_ENUM.BLOCKRIGHT):
-        case this.stateMachines.get(PARAMS_NAME_ENUM.DEATH):
-        case this.stateMachines.get(PARAMS_NAME_ENUM.AIRDEATH):
-          if (this.params.get(PARAMS_NAME_ENUM.DEATH).value) {
+    run() {
+          if(!this.currentState){
+            this.currentState=this.stateMachines.get(PARAMS_NAME_ENUM.IDLE);
+          }
+          if(this.params.get(PARAMS_NAME_ENUM.DEATH).value) {
             this.currentState = this.stateMachines.get(PARAMS_NAME_ENUM.DEATH)
           } else if (this.params.get(PARAMS_NAME_ENUM.AIRDEATH).value) {
             this.currentState = this.stateMachines.get(PARAMS_NAME_ENUM.AIRDEATH)
@@ -118,10 +110,5 @@ export class PlayerStateMachine extends StateMachine {
           } else {
             this.currentState = this.currentState
           }
-          break
-        default:
-          this.currentState = this.stateMachines.get(PARAMS_NAME_ENUM.IDLE)
-          break
       }
-    }
   }

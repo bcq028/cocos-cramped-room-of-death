@@ -5,7 +5,7 @@ import { EventManager } from "../Runtime/EventManager";
 import { PlayerStateMachine } from "../Scripts/Player/PlayerStateMachine";
 import { TILE_WIDTH, TILE_HEIGHT } from "../Scripts/Tile/TileManager";
 import { StateMachine } from "./StateMachine";
-
+import {randomByLength} from '../Scripts/Utils/index'
 
 const { ccclass, property } = _decorator;
 
@@ -13,6 +13,7 @@ const ANIMATION_SPEED=1/8;
 
 @ccclass('EntityManager')
 export class EntityManager extends Component {
+    id:string=randomByLength(12);
     x=0;
     y=0;
     fsm:StateMachine;

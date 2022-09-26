@@ -1,9 +1,11 @@
 
 import { _decorator, Component, Node } from 'cc';
-import { EVENT_ENUM } from '../../Enum';
+import { DIRECTION_ENUM, ENTITY_STATE_ENUM, ENTITY_TYPE_ENUM, EVENT_ENUM } from '../../Enum';
 import levels, { ILevel } from '../../Levels';
 import { DataManager } from '../../Runtime/DataManager';
 import { EventManager } from '../../Runtime/EventManager';
+import { DoorManager } from '../Door/DoorManager';
+import { IronSkeletonManager } from '../IronSkeleton/IronSkeletonManager';
 import { PlayerManager } from '../Player/PlayerManager';
 import { TILE_HEIGHT, TILE_WIDTH } from '../Tile/TileManager';
 import { TileMapManager } from '../Tile/TileMapManager';
@@ -30,6 +32,7 @@ export class BattleManager extends Component {
         this.generateTileMap();
         this.generatePlayer();
         this.generateEnemies();
+        this.generateDoor();
     }
     initLevel(){
         const level=levels[`level${DataManager.Instance.levelIndex}`];
@@ -52,6 +55,13 @@ export class BattleManager extends Component {
         tileMapManager.init();
         this.adaptPos();
     }
+    async generateDoor(){
+        const node=createUINode();
+        node.setParent(this.stage);
+        const doorManager=node.addComponent(DoorManager);
+        await doorManager.init();
+        DataManager.Instance.door=doorManager;
+    }
     async generatePlayer(){
         const node=createUINode();
         node.setParent(this.stage);
@@ -64,8 +74,29 @@ export class BattleManager extends Component {
         const enemy=createUINode();
         enemy.setParent(this.stage);
         const woodenSkeletonManager=enemy.addComponent(WoodenSkeletonManager);
-        await woodenSkeletonManager.init();
+        await woodenSkeletonManager.init(
+            {
+                x:2,
+                y:4,
+                type:ENTITY_TYPE_ENUM.SKELETON_WOODEN,
+                direction:DIRECTION_ENUM.TOP,
+                state:ENTITY_STATE_ENUM.IDLE
+            }
+        );
         DataManager.Instance.enemies.push(woodenSkeletonManager);
+        const enemy2=createUINode();
+        enemy2.setParent(this.stage);
+        const ironSkeletonManager=enemy2.addComponent(IronSkeletonManager);
+        await ironSkeletonManager.init(
+            {
+                x:2,
+                y:2,
+                type:ENTITY_TYPE_ENUM.SKELETON_IRON,
+                direction:DIRECTION_ENUM.TOP,
+                state:ENTITY_STATE_ENUM.IDLE
+            }
+        );
+        DataManager.Instance.enemies.push(ironSkeletonManager);
     }
     adaptPos(){
         const {mapRowCount,mapColumnCount}=DataManager.Instance;
