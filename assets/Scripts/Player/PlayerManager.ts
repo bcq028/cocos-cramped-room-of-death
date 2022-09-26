@@ -67,7 +67,6 @@ export class PlayerManager extends EntityManager {
             this.direction = DIRECTION_ENUM.TOP
           }
           this.state = ENTITY_STATE_ENUM.TURNLEFT
-          EventManager.Instance.emit(EVENT_ENUM.PLAYER_MOVE_END)
         } else if (inputDirection === CONTROLLER_ENUM.TURNRIGHT) {
           if (this.direction === DIRECTION_ENUM.TOP) {
             this.direction = DIRECTION_ENUM.RIGHT
@@ -81,6 +80,7 @@ export class PlayerManager extends EntityManager {
           this.state = ENTITY_STATE_ENUM.TURNRIGHT
           EventManager.Instance.emit(EVENT_ENUM.PLAYER_MOVE_END)
         }
+        EventManager.Instance.emit(EVENT_ENUM.PLAYER_MOVE_END)
       }
     showSmoke(type: DIRECTION_ENUM) {
     EventManager.Instance.emit(EVENT_ENUM.SHOW_SMOKE, this.x, this.y, type)

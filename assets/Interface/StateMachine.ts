@@ -23,7 +23,7 @@ export abstract class StateMachine extends Component {
     stateMachines:Map<string,State | SubStateMachine>=new Map();
     animationComponent:Animation;
     waittingList:Array<Promise<SpriteFrame[]>>=[];
-    abstract init():void;
+    abstract  init():void;
     abstract run():void;
 
     get currentState(){

@@ -8,6 +8,7 @@ import { PlayerManager } from '../Player/PlayerManager';
 import { TILE_HEIGHT, TILE_WIDTH } from '../Tile/TileManager';
 import { TileMapManager } from '../Tile/TileMapManager';
 import { createUINode } from '../Utils';
+import { WoodenSkeletonManager } from '../WoodenSkeleton/WoodenSkeletonManager';
 
 const { ccclass, property } = _decorator;
 
@@ -28,6 +29,7 @@ export class BattleManager extends Component {
         this.initLevel();
         this.generateTileMap();
         this.generatePlayer();
+        this.generateEnemies();
     }
     initLevel(){
         const level=levels[`level${DataManager.Instance.levelIndex}`];
@@ -50,11 +52,20 @@ export class BattleManager extends Component {
         tileMapManager.init();
         this.adaptPos();
     }
-    generatePlayer(){
+    async generatePlayer(){
         const node=createUINode();
         node.setParent(this.stage);
         const playerManager=node.addComponent(PlayerManager);
-        playerManager.init();
+        await playerManager.init();
+        DataManager.Instance.player=playerManager;
+        EventManager.Instance.emit(EVENT_ENUM.PLAYER_BORN,true);
+    }
+    async generateEnemies(){
+        const enemy=createUINode();
+        enemy.setParent(this.stage);
+        const woodenSkeletonManager=enemy.addComponent(WoodenSkeletonManager);
+        await woodenSkeletonManager.init();
+        DataManager.Instance.enemies.push(woodenSkeletonManager);
     }
     adaptPos(){
         const {mapRowCount,mapColumnCount}=DataManager.Instance;

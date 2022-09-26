@@ -4,6 +4,7 @@ import { IEntity } from "../Levels";
 import { EventManager } from "../Runtime/EventManager";
 import { PlayerStateMachine } from "../Scripts/Player/PlayerStateMachine";
 import { TILE_WIDTH, TILE_HEIGHT } from "../Scripts/Tile/TileManager";
+import { StateMachine } from "./StateMachine";
 
 
 const { ccclass, property } = _decorator;
@@ -14,7 +15,7 @@ const ANIMATION_SPEED=1/8;
 export class EntityManager extends Component {
     x=0;
     y=0;
-    fsm:PlayerStateMachine;
+    fsm:StateMachine;
     protected transform: UITransform;
     private _state: ENTITY_STATE_ENUM;
     private _direction: DIRECTION_ENUM;
